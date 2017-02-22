@@ -4,9 +4,14 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "symfony/http-foundation": "^3.2"
+        "symfony/http-foundation": "^3.2",
+        "symfony/routing": "^3.2",
+        "symfony/http-kernel": "^3.2"
     },
     "config": {
         "optimize-autoloader": true
+    },
+    "autoload": {
+        "psr-4": { "": "src/" }
     }
 }

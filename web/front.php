@@ -9,24 +9,21 @@
 require_once __DIR__.'/../vendor/autoload.php';
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing;
+use Symfony\Component\HttpKernel\Controller\ControllerResolver;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
+
 
 $request = Request::createFromGlobals();
-$response = new Response();
+$routes = include __DIR__.'/../src/app.php';
 
-$map = array(
-    '/hello' => __DIR__.'/../src/pages/hello.php',
-    '/bye'   => __DIR__.'/../src/pages/bye.php',
-);
+$context = new Routing\RequestContext();
+$matcher = new Routing\Matcher\UrlMatcher($routes, $context);
 
-$path = $request->getPathInfo();
-if (isset($map[$path])) {
-    ob_start();
-    include $map[$path];
-    $response->setContent(ob_get_clean());
-} else {
-    $response->setStatusCode(404);
-    $response->setContent('Not Found');
-}
+$controllerResolver = new ControllerResolver();
+$argumentResolver = new ArgumentResolver();
+
+$framework = new Calming\Framework($matcher, $controllerResolver, $argumentResolver);
+$response = $framework->handle($request);
 
 $response->send();
